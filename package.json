@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node backend/server",
+    "start": "react-scripts --openssl-legacy-provider start",
     "server": "nodemon backend/server",
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -16,6 +16,7 @@
   "author": "Ramesh Solasa",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.1692.0",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
