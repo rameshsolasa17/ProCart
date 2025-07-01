@@ -29,7 +29,7 @@ jobs:
             - name: Publish Image to docker hub
               run: docker push rameshsolasa17/procart:latest
 
-              
+
     deploy: 
         needs: build
         runs-on: self-hosted
@@ -38,10 +38,10 @@ jobs:
               run: docker pull rameshsolasa17/procart:latest
 
             - name: Stop Existing Container
-              run: docker stop procart-container || true
+              run: docker stop procart-app-container || true
             
             - name: Delete existing container
-              run: docker rm -f procart-container || true
+              run: docker rm -f procart-app-container || true
 
             - name: Run Docker Container
               run: docker run -d -p 5000:5000 --name procart-app-container -e JWT_SECRET='${{ secrets.JWT_SECRET }}' -e MONGO_URI='${{ secrets.MONGO_URI }}' -e PAYPAL_CLIENT_ID='${{ secrets.PAYPAL_CLIENT_ID }}' -e AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' -e AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' rameshsolasa17/procart
