@@ -23,7 +23,14 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json())
-app.use(cors());
+app.use(cors())
+
+app.use((_req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+  
+    next();
+})
 
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
