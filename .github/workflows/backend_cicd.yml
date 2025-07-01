@@ -21,7 +21,7 @@ jobs:
                   sudo rm -rf /usr/local/lib/android
                   sudo docker system prune -af
 
-                  
+
             - name: Checkout Source
               uses: actions/checkout@v4
 
@@ -42,6 +42,13 @@ jobs:
         needs: build
         runs-on: self-hosted
         steps:
+            - name: Clean up to free space
+              run: |
+                  sudo rm -rf /usr/share/dotnet
+                  sudo rm -rf /opt/ghc
+                  sudo rm -rf /usr/local/lib/android
+                  sudo docker system prune -af
+                  
             - name: Pull Image from docker hub
               run: docker pull rameshsolasa17/procart:latest
 
