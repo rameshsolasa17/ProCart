@@ -14,6 +14,14 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
+            - name: Clean up to free space
+              run: |
+                  sudo rm -rf /usr/share/dotnet
+                  sudo rm -rf /opt/ghc
+                  sudo rm -rf /usr/local/lib/android
+                  sudo docker system prune -af
+
+                  
             - name: Checkout Source
               uses: actions/checkout@v4
 
