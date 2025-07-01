@@ -1,0 +1,47 @@
+name: Deploy MERN application
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - 'backend/**'
+            - 'Dockerfile'
+            - 'package.json'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Source
+              uses: actions/checkout@v4
+
+            
+            - name: Login to docker hub
+              run: docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            
+            - name: Build Docker Image
+              run: docker build -t rameshsolasa17/procart .
+
+            
+            - name: Publish Image to docker hub
+              run: docker push rameshsolasa17/procart:latest
+    
+    deploy: 
+        needs: build
+        runs-on: self-hosted
+        steps:
+            - name: Pull Image from docker hub
+              run: docker pull rameshsolasa17/procart:latest
+
+            - name: Stop Existing Container
+              run: docker rm -f procart-container || true
+
+            - name: Run Docker Container
+              run: docker run -d -p 5000:5000 --name procart-app-container -e  JWT_SECRET = '${{ secrets.JWT_SECRET }}' \
+              -e MONGO_URI = '${{ secrets.MONGO_URI }}' \
+              -e PAYPAL_CLIENT_ID = '${{ secrets.PAYPAL_CLIENT_ID }}' \
+              -e PORT = '${{ secrets.PORT }}'  \
+              -e AWS_ACCESS_KEY_ID = '${{ secrets.AWS_ACCESS_KEY_ID }}'  \
+              -e AWS_SECRET_ACCESS_KEY = '${{ secrets.AWS_SECRET_ACCESS_KEY }}' rameshsolasa17/procart
