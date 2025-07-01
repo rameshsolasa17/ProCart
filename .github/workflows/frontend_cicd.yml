@@ -1,4 +1,4 @@
-name: Build & Deploy React to S3 via Docker
+name: Build React in Docker and Deploy to S3
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - 'frontend/**'
-      - 'Dockerfile'
       - '.github/workflows/**'
 
 jobs:
@@ -14,38 +13,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build React in Docker with Backend URL
+      - name: Set up Node (for tooling if needed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build React app in Docker
         run: |
           docker build \
-            --build-arg REACT_APP_API_URL='${{ secrets.REACT_APP_API_URL }}' \
-            -t react-builder .
+            --build-arg REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }} \
+            -t react-builder ./frontend
 
-      - name: Extract build folder from Docker
+      - name: Extract Build Files from Container
         run: |
           docker create --name extract-builder react-builder
           docker cp extract-builder:/app/build ./build
           docker rm extract-builder
 
-      - name: Sync build to S3
-        uses: jakejarvis/s3-sync-action@v0.5.1
+      # Optional: Deploy to S3
+      - name: Deploy to S3
+        if: ${{ secrets.AWS_ACCESS_KEY_ID && secrets.AWS_SECRET_ACCESS_KEY && secrets.S3_BUCKET_NAME }}
+        uses: jakejarvis/s3-sync-action@master
         with:
-          args: --delete
+          args: --acl public-read --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: build
+          AWS_REGION: 'us-east-1'
+          SOURCE_DIR: './build'
 
+      # Optional: Invalidate CloudFront
       - name: Invalidate CloudFront
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
