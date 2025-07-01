@@ -23,20 +23,23 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json())
-app.use(cors())
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000, https://d2uzea4v3pog59.cloudfront.net/, http://procart-app.s3-website.us-east-2.amazonaws.com/');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://procart-app.s3-website.us-east-2.amazonaws.com',
+  'https://d2uzea4v3pog59.cloudfront.net'
+];
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 
 app.use('/api/products', productRoutes)
