@@ -1,7 +1,10 @@
-import axios from 'axios';
+import axios from 'axios'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const instance = axios.create({
-  baseURL: 'http://13.58.148.115:5000', 
+  baseURL: process.env.REACT_APP_API_URL, 
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
