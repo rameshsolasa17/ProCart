@@ -33,7 +33,6 @@ jobs:
           docker cp extract-builder:/app/build ./build
           docker rm extract-builder
 
-      # Optional: Deploy to S3
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -45,7 +44,6 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION_REACT }} 
           SOURCE_DIR: './build'
 
-      # Optional: Invalidate CloudFront
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
