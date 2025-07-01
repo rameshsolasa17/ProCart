@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../api/axios.js'
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
 import {
   ORDER_CREATE_REQUEST,
