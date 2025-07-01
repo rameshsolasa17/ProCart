@@ -36,6 +36,9 @@ jobs:
               run: docker pull rameshsolasa17/procart:latest
 
             - name: Stop Existing Container
+              run: docker stop procart-app-container
+            
+            - name: Delete existing container
               run: docker rm -f procart-container || true
 
             - name: Run Docker Container
