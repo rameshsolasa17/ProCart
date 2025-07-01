@@ -39,4 +39,4 @@ jobs:
               run: docker rm -f procart-container || true
 
             - name: Run Docker Container
-              run: docker run -d -p 5000:5000 --name procart-app-container -e  JWT_SECRET = '${{ secrets.JWT_SECRET }}' -e MONGO_URI = '${{ secrets.MONGO_URI }}' -e PAYPAL_CLIENT_ID = '${{ secrets.PAYPAL_CLIENT_ID }}' -e PORT = '${{ secrets.PORT }}'  -e AWS_ACCESS_KEY_ID = '${{ secrets.AWS_ACCESS_KEY_ID }}'  -e AWS_SECRET_ACCESS_KEY = '${{ secrets.AWS_SECRET_ACCESS_KEY }}' rameshsolasa17/procart
+              run: docker run -d -p 5000:5000 --name procart-app-container -e JWT_SECRET='${{ secrets.JWT_SECRET }}' -e MONGO_URI='${{ secrets.MONGO_URI }}' -e PAYPAL_CLIENT_ID='${{ secrets.PAYPAL_CLIENT_ID }}'-e PORT='${{ secrets.PORT }}' -e AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' -e AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' rameshsolasa17/procart
