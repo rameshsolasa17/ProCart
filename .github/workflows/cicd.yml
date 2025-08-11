@@ -4,11 +4,6 @@ on:
     push:
         branches:
             - master
-        paths:
-            - '/**'
-            - 'Dockerfile'
-            - 'package.json'
-            - '.github/workflows/backend_cicd.yml'
 
 jobs:
     build:
